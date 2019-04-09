@@ -50,11 +50,12 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             else:
                 ESPparameters['query'] = 'cmd'
 
-            if 'open' in command['state']['value']:
-                ESPparameters['state'] = command['state']['value']
-            elif 'close' in command['state']['value']:
-                ESPparameters['state'] = command['state']['value']
-
+            #if 'open' in command['state']['value']:
+            #    ESPparameters['state'] = command['state']['value']
+            #elif 'close' in command['state']['value']:
+            #    ESPparameters['state'] = command['state']['value']
+            
+            ESPparameters['state'] = command['state']['value']
             ESPparameters['instance'] = command['instance']['value']
             # {"instance": "1", "state": "open", "query":"?"}
             # {"instance": "both", "state": "close", "query":"cmd"}
