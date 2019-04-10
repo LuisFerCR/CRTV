@@ -16,7 +16,6 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             print(e.args)
             self.writer.close()
             self.ws_server.unregister(self)
-
             raise
 
         # TODO: Check headers etc. to see if we are to upgrade to WS.
@@ -24,7 +23,6 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             # HACK: Put the read data back, to continue with normal WS handling.
             self.reader.feed_data(bytes(request_line))
             self.reader.feed_data(headers.as_bytes().replace(b'\n', b'\r\n'))
-
             return await super(HttpWSSProtocol, self).handler()
         else:
             try:
@@ -32,13 +30,17 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             except Exception as e:
                 print(e)
             finally:
-
                 self.writer.close()
                 self.ws_server.unregister(self)
 
 
     async def http_handler(self, method, path, version):
-        response = ''
+        response = '\r\n'.join([
+            'HTTP/1.1 404 Not Found',
+            'Content-Type: text/plain',
+            '',
+            '404 Not Found\n%s %s.' % (method, path),
+        ])
         try:
 
             googleRequest = self.reader._buffer.decode('utf-8')
@@ -99,11 +101,9 @@ async def ws_handler(websocket, path):
     finally:
         print("")
 
-
-
-port = int(os.getenv('PORT', 80))#5687
-start_server = websockets.serve(ws_handler, '', port, klass=HttpWSSProtocol)
-# logger.info('Listening on port %d', port)
+port = int(os.getenv('PORT', 5687))#5687
+start_server = websockets.serve(ws_handler, '0.0.0.0', port, klass=HttpWSSProtocol)
+logger.info('Listening on port %d', port)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
