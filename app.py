@@ -35,12 +35,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
 
 
     async def http_handler(self, method, path, version):
-        response = '\r\n'.join([
-            'HTTP/1.1 404 Not Found',
-            'Content-Type: text/plain',
-            '',
-            '404 Not Found\n%s %s.' % (method, path),
-        ])
+        response = ''
         try:
 
             googleRequest = self.reader._buffer.decode('utf-8')
@@ -103,7 +98,7 @@ async def ws_handler(websocket, path):
 
 port = int(os.getenv('PORT', 5687))#5687
 start_server = websockets.serve(ws_handler, '0.0.0.0', port, klass=HttpWSSProtocol)
-logger.info('Listening on port %d', port)
+#logger.info('Listening on port %d', port)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
