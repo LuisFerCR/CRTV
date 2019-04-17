@@ -4,9 +4,6 @@ import json
 import time, os
 
 
-
-
-
 class HttpWSSProtocol(websockets.WebSocketServerProtocol):
     rwebsocket = None
     rddata = None
