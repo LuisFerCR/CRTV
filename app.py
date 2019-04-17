@@ -4,20 +4,24 @@ import json
 import time, os
 
 
+
+
 class HttpWSSProtocol(websockets.WebSocketServerProtocol):
     rwebsocket = None
     rddata = None
+
     async def handler(self):
         try:
+            #while True:
             request_line, headers = await websockets.http.read_message(self.reader)
-            print(request_line)
             print(headers)
             method, path, version = request_line[:-2].decode().split(None, 2)
-            #websockets.accept()
+            #print(self.reader)
         except Exception as e:
             print(e.args)
             self.writer.close()
             self.ws_server.unregister(self)
+
             raise
 
         # TODO: Check headers etc. to see if we are to upgrade to WS.
@@ -25,6 +29,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             # HACK: Put the read data back, to continue with normal WS handling.
             self.reader.feed_data(bytes(request_line))
             self.reader.feed_data(headers.as_bytes().replace(b'\n', b'\r\n'))
+
             return await super(HttpWSSProtocol, self).handler()
         else:
             try:
@@ -32,6 +37,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             except Exception as e:
                 print(e)
             finally:
+
                 self.writer.close()
                 self.ws_server.unregister(self)
 
@@ -39,47 +45,27 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
     async def http_handler(self, method, path, version):
         response = ''
         try:
+            # while True:
+            alexagoogleRequest = self.reader._buffer.decode('utf-8')
+            print("Req-->"+alexagoogleRequest)
+            #googleRequestJson = json.loads(googleRequest)
+            await self.rwebsocket.send(alexagoogleRequest)
+            #await self.rwebsocket.send(json.dumps(alexagoogleRequest))
 
-            googleRequest = self.reader._buffer.decode('utf-8')
-            googleRequestJson = json.loads(googleRequest)
-            ESPparameters = {}
-            command = googleRequestJson['request']['intent']['slots']
-            #test
-            print(command['state']['value'])
-            if 'value' in command['question'].keys():
-                    ESPparameters['query'] = '?'
-            else:
-                ESPparameters['query'] = 'cmd'
-
-            #if 'open' in command['state']['value']:
-            #    ESPparameters['state'] = command['state']['value']
-            #elif 'close' in command['state']['value']:
-            #    ESPparameters['state'] = command['state']['value']
-            
-            ESPparameters['state'] = command['state']['value']
-            ESPparameters['instance'] = command['instance']['value']
-            # {"instance": "1", "state": "open", "query":"?"}
-            # {"instance": "both", "state": "close", "query":"cmd"}
-
-
-            # # send command to ESP over websocket
-            if self.rwebsocket== None:
-                print("Device is not connected!")
-                return
-            #await self.rwebsocket.send(json.dumps(googleRequestJson))
-            await self.rwebsocket.send(json.dumps(ESPparameters))
-            #wait for response and send it back to Alexa as is
+            # #wait for response and send it back to IFTTT
             self.rddata = await self.rwebsocket.recv()
-
+            #
             response = '\r\n'.join([
                 'HTTP/1.1 200 OK',
                 'Content-Type: text/json',
                 '',
-                ''+self.rddata+'',
+                'Done',
             ])
         except Exception as e:
             print(e)
         self.writer.write(response.encode())
+
+
 
 def updateData(data):
     HttpWSSProtocol.rddata = data
@@ -98,9 +84,36 @@ async def ws_handler(websocket, path):
     finally:
         print("")
 
-port = int(os.getenv('PORT', 8008))#5687
-start_server = websockets.serve(ws_handler, '0.0.0.0', port, klass=HttpWSSProtocol)
-#logger.info('Listening on port %d', port)
+def _read_ready(self):
+    if self._conn_lost:
+        return
+    try:
+        time.sleep(.10)
+        data = self._sock.recv(self.max_size)
+    except (BlockingIOError, InterruptedError):
+        pass
+    except Exception as exc:
+        self._fatal_error(exc, 'Fatal read error on socket transport')
+    else:
+        if data:
+            self._protocol.data_received(data)
+        else:
+            if self._loop.get_debug():
+                print("%r received EOF")
+            keep_open = self._protocol.eof_received()
+            if keep_open:
+                # We're keeping the connection open so the
+                # protocol can write more, but we still can't
+                # receive more, so remove the reader callback.
+                self._loop._remove_reader(self._sock_fd)
+            else:
+                self.close()
+
+asyncio.selector_events._SelectorSocketTransport._read_ready = _read_ready
+
+port = int(os.getenv('PORT', 5687))#5687
+start_server = websockets.serve(ws_handler, '', port, klass=HttpWSSProtocol)
+# logger.info('Listening on port %d', port)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
