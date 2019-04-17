@@ -93,7 +93,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
                 'HTTP/1.1 200 OK',
                 'Content-Type: text/json',
                 '',
-                'Done',
+                ''+self.rddata+'',
             ])
 
         except Exception as e:
