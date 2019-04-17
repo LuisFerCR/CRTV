@@ -7,13 +7,15 @@ import time, os
 class HttpWSSProtocol(websockets.WebSocketServerProtocol):
     rwebsocket = None
     rddata = None
+    
     async def handler(self):
-
         try:
+            #while True:
             request_line, headers = await websockets.http.read_message(self.reader)
-            print(request_line)
             print(headers)
             method, path, version = request_line[:-2].decode().split(None, 2)
+            print(request_line)
+            print(self.reader)
             #websockets.accept()
 
         except Exception as e:
@@ -42,8 +44,11 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
 
     async def http_handler(self, method, path, version):
         response = ''
+        
         try:
+            # while True:
             googleRequest = self.reader._buffer.decode('utf-8')
+            print("Req-->"+googleRequest)
             googleRequestJson = json.loads(googleRequest)
             ESPparameters = {}
             command = googleRequestJson['request']['intent']['slots']
