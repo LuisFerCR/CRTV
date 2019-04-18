@@ -49,16 +49,16 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             # while True:
             googleRequest = self.reader._buffer.decode('utf-8')
             print("Req-->"+googleRequest)
-            ###googleRequestJson = json.loads(googleRequest)
-            ###ESPparameters = {}
-            ###command = googleRequestJson['request']['intent']['slots']
+            googleRequestJson = json.loads(googleRequest)
+            ESPparameters = {}
+            command = googleRequestJson['request']['intent']['slots']
             #test
-            ###print(command['state']['value'])
+            print(command['state']['value'])
             
-            ###if 'value' in command['question'].keys():
-            ###        ESPparameters['query'] = '?'
-            ###else:
-            ###    ESPparameters['query'] = 'cmd'
+            if 'value' in command['question'].keys():
+                    ESPparameters['query'] = '?'
+            else:
+                ESPparameters['query'] = 'cmd'
 
             #if 'open' in command['state']['value']:
 
@@ -69,8 +69,8 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             #    ESPparameters['state'] = command['state']['value']
 
             
-            ###ESPparameters['state'] = command['state']['value']
-            ###ESPparameters['instance'] = command['instance']['value']
+            ESPparameters['state'] = command['state']['value']
+            ESPparameters['instance'] = command['instance']['value']
 
             # {"instance": "1", "state": "open", "query":"?"}
             # {"instance": "both", "state": "close", "query":"cmd"}
@@ -83,8 +83,8 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             ###    return
 
             #await self.rwebsocket.send(json.dumps(googleRequestJson))
-            ###await self.rwebsocket.send(json.dumps(ESPparameters))
-            await self.rwebsocket.send(googleRequest)
+            await self.rwebsocket.send(json.dumps(ESPparameters))
+            ###await self.rwebsocket.send(googleRequest)
             #wait for response and send it back to Alexa as is
 
             self.rddata = await self.rwebsocket.recv()
