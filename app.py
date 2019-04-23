@@ -88,8 +88,8 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
          
             
             #await self.rwebsocket.send(json.dumps(googleRequestJson))
-            await self.rwebsocket.send(json.dumps(ESPparameters))
-            ###await self.rwebsocket.send(googleRequest)
+            #await self.rwebsocket.send(json.dumps(ESPparameters))
+            await self.rwebsocket.send(googleRequest)
             #wait for response and send it back to Alexa as is
 
             self.rddata = await self.rwebsocket.recv()
