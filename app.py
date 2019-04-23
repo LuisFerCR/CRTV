@@ -55,7 +55,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             #ESPparamenter['instance'] = googleRequestJson['request']['intent']['slots']['instance']['value']
             #ESPparamenter['state'] = googleRequestJson['request']['intent']['slots']['state']['value']
             
-            ###command = googleRequestJson['request']['intent']['slots']
+            command = googleRequestJson['request']['intent']['slots']
             #test
             ###print(command['state']['value'])
             
