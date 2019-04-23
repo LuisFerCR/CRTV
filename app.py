@@ -51,7 +51,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             print("Req-->"+googleRequest)
             googleRequestJson = json.loads(googleRequest)
             ESPparameters = {}
-            ESPparamenter['query'] = googleRequestJson['request']['intent']['slots']['question']['name']
+            ESPparamenter['query'] = googleRequestJson['request']['intent']['slots']['question']['confirmationStatus']
             ESPparamenter['instance'] = googleRequestJson['request']['intent']['slots']['instance']['value']
             ESPparamenter['state'] = googleRequestJson['request']['intent']['slots']['state']['value']
             
