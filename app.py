@@ -49,8 +49,12 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             # while True:
             googleRequest = self.reader._buffer.decode('utf-8')
             print("Req-->"+googleRequest)
-            ###googleRequestJson = json.loads(googleRequest)
+            googleRequestJson = json.loads(googleRequest)
             ESPparameters = {}
+            ESPparamenter['query'] = googleRequestJson['request']['intent']['slots']['question']['name']
+            ESPparamenter['instance'] = googleRequestJson['request']['intent']['slots']['instance']['value']
+            ESPparamenter['query'] = googleRequestJson['request']['intent']['slots']['state']['value']
+            
             ###command = googleRequestJson['request']['intent']['slots']
             #test
             ###print(command['state']['value'])
@@ -81,11 +85,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             ###if self.rwebsocket== None:
             ###    print("Device is not connected!")
             ###    return
-            
-            
-            ESPparameters['instance'] = "volumen"
-            ESPparameters['state'] = "up"
-            ESPparameters['question'] = "cmd"
+         
             
             #await self.rwebsocket.send(json.dumps(googleRequestJson))
             await self.rwebsocket.send(json.dumps(ESPparameters))
