@@ -49,13 +49,13 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             # while True:
             googleRequest = self.reader._buffer.decode('utf-8')
             #print("Req-->"+googleRequest)
-            googleRequestJson = json.loads(googleRequest)
-            ESPparameters = {}
+            #googleRequestJson = json.loads(googleRequest)
+            #ESPparameters = {}
             #ESPparamenter['query'] = googleRequestJson['request']['intent']['slots']['question']['confirmationStatus']
             #ESPparamenter['instance'] = googleRequestJson['request']['intent']['slots']['instance']['value']
             #ESPparamenter['state'] = googleRequestJson['request']['intent']['slots']['state']['value']
             
-            command = googleRequestJson['request']['intent']['slots']
+            #command = googleRequestJson['request']['intent']['slots']
             #test
             ###print(command['state']['value'])
             
