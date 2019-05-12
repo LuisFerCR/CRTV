@@ -10,7 +10,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
     
     async def handler(self):
         try:
-            #while True:
+            while True:
             request_line, headers = await websockets.http.read_message(self.reader)
             print(headers)
             method, path, version = request_line[:-2].decode().split(None, 2)
