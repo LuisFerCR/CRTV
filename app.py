@@ -16,7 +16,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             method, path, version = request_line[:-2].decode().split(None, 2)
             print(request_line)
             print(self.reader)
-            websockets.accept()
+            #websockets.accept()
 
         except Exception as e:
             print(e.args)
