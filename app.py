@@ -12,14 +12,17 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
         try:
             #while True:
             request_line, headers = await websockets.http.read_message(self.reader)
+            print("Encabezados HTTP")
             print(headers)
             method, path, version = request_line[:-2].decode().split(None, 2)
+            print("Requested line")
             print(request_line)
-            print("Holaaa")
+            print("Self Reader")
             print(self.reader)
             #websockets.accept()
 
         except Exception as e:
+            print("Ha ocurrido una excepcion")
             print(e.args)
             self.writer.close()
             self.ws_server.unregister(self)
@@ -30,6 +33,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
 
         if path == '/ws':
             # HACK: Put the read data back, to continue with normal WS handling.
+            print("La ruta es ws")
             self.reader.feed_data(bytes(request_line))
             self.reader.feed_data(headers.as_bytes().replace(b'\n', b'\r\n'))
             return await super(HttpWSSProtocol, self).handler()
