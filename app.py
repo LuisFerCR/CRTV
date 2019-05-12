@@ -15,7 +15,7 @@ class HttpWSSProtocol(websockets.WebSocketServerProtocol):
             print("Encabezados HTTP")
             print(headers)
             method, path, version = request_line[:-2].decode().split(None, 2)
-            print("Requested line")
+            print("Requeste Line - Linea solicitada")
             print(request_line)
             print("Self Reader")
             print(self.reader)
